@@ -22,7 +22,7 @@ impl VerificationMethod for ReadbackVerifier {
         while bytes_read < file_size {
             let bytes_to_read = std::cmp::min(buffer.len(), (file_size - bytes_read) as usize);
             let chunk = &mut buffer[..bytes_to_read];
-            
+
             let n = file.read(chunk)?;
             if n == 0 {
                 break;
@@ -31,7 +31,7 @@ impl VerificationMethod for ReadbackVerifier {
             if let Some(expected) = expected_pattern {
                 let pattern_len = expected.len();
                 let start_offset = (bytes_read % pattern_len as u64) as usize;
-                
+
                 for (i, &byte) in chunk[..n].iter().enumerate() {
                     let pattern_idx = (start_offset + i) % pattern_len;
                     if byte != expected[pattern_idx] {

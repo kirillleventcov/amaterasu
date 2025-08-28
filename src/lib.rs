@@ -1,7 +1,7 @@
-pub mod storage;
-pub mod patterns;
 pub mod io;
+pub mod patterns;
 pub mod security;
+pub mod storage;
 
 pub use anyhow::{Error, Result};
 pub use std::path::{Path, PathBuf};
@@ -43,7 +43,7 @@ impl Amaterasu {
         let storage_type = storage::detector::detect_storage_type(path)?;
         let pattern_generator = patterns::create_random_generator();
         let wiper = io::FileWiper::new(&storage_type, self.config.clone());
-        
+
         wiper.wipe(path, pattern_generator).await
     }
 

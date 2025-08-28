@@ -21,7 +21,7 @@ impl FileWiper {
     pub async fn wipe(&self, path: &Path, _pattern: WipePattern) -> Result<()> {
         let file_size = std::fs::metadata(path)?.len();
         let patterns = crate::patterns::create_pattern_sequence(&self.config.mode);
-        
+
         println!("🔥 Wiping: {}", path.display());
         println!("Size: {} bytes", file_size);
         println!("Storage: {:?}", self.storage_type);
@@ -42,12 +42,16 @@ impl FileWiper {
 
         for (pass_num, pattern) in patterns.into_iter().enumerate() {
             if let Some(ref pb) = progress_bar {
-                pb.set_message(format!("Pass {}/{} ({})", pass_num + 1, 
-                    crate::patterns::create_pattern_sequence(&self.config.mode).len(), 
-                    pattern.name()));
+                pb.set_message(format!(
+                    "Pass {}/{} ({})",
+                    pass_num + 1,
+                    crate::patterns::create_pattern_sequence(&self.config.mode).len(),
+                    pattern.name()
+                ));
             }
 
-            self.wipe_pass(path, pattern, file_size, progress_bar.clone()).await?;
+            self.wipe_pass(path, pattern, file_size, progress_bar.clone())
+                .await?;
         }
 
         if let Some(ref pb) = progress_bar {
@@ -74,9 +78,7 @@ impl FileWiper {
         let path_owned = path.to_path_buf();
 
         task::spawn_blocking(move || -> Result<()> {
-            let mut file = OpenOptions::new()
-                .write(true)
-                .open(&path_owned)?;
+            let mut file = OpenOptions::new().write(true).open(&path_owned)?;
 
             file.seek(SeekFrom::Start(0))?;
 
@@ -100,18 +102,18 @@ impl FileWiper {
 
             file.sync_all()?;
             Ok(())
-        }).await??;
+        })
+        .await??;
 
         Ok(())
     }
 
     async fn verify_wipe(&self, path: &Path, file_size: u64) -> Result<()> {
         println!("🔍 Verifying wipe...");
-        
+
         let path_owned = path.to_path_buf();
         task::spawn_blocking(move || -> Result<()> {
             use std::io::Read;
-            
             let mut file = File::open(&path_owned)?;
             let mut buffer = vec![0u8; 8192];
             let mut bytes_read = 0u64;
@@ -120,7 +122,6 @@ impl FileWiper {
             while bytes_read < file_size {
                 let bytes_to_read = std::cmp::min(buffer.len(), (file_size - bytes_read) as usize);
                 let chunk = &mut buffer[..bytes_to_read];
-                
                 let n = file.read(chunk)?;
                 if n == 0 {
                     break;
@@ -144,7 +145,6 @@ impl FileWiper {
             } else {
                 println!("✅ Verification successful - data overwritten with pattern");
             }
-            
             Ok(())
         }).await??;
 

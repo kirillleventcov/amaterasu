@@ -1,5 +1,5 @@
-use clap::{Arg, Command};
 use amaterasu::{Amaterasu, AmaterasuConfig, WipeMode};
+use clap::{Arg, Command};
 use std::path::PathBuf;
 
 #[tokio::main]
@@ -12,7 +12,7 @@ async fn main() -> anyhow::Result<()> {
                 .help("Files to securely delete")
                 .num_args(1..)
                 .required(true)
-                .value_parser(clap::value_parser!(PathBuf))
+                .value_parser(clap::value_parser!(PathBuf)),
         )
         .arg(
             Arg::new("mode")
@@ -20,20 +20,20 @@ async fn main() -> anyhow::Result<()> {
                 .short('m')
                 .help("Wiping mode")
                 .value_parser(["fast", "standard", "paranoid"])
-                .default_value("standard")
+                .default_value("standard"),
         )
         .arg(
             Arg::new("verify")
                 .long("verify")
                 .short('v')
                 .help("Verify wipe completion")
-                .action(clap::ArgAction::SetTrue)
+                .action(clap::ArgAction::SetTrue),
         )
         .arg(
             Arg::new("no-progress")
                 .long("no-progress")
                 .help("Disable progress bar")
-                .action(clap::ArgAction::SetTrue)
+                .action(clap::ArgAction::SetTrue),
         )
         .get_matches();
 

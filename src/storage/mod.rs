@@ -13,7 +13,9 @@ impl StorageType {
         match self {
             StorageType::HDD { block_size, .. } => *block_size,
             StorageType::SSD { .. } => 4096,
-            StorageType::NVMe { optimal_io_size, .. } => *optimal_io_size,
+            StorageType::NVMe {
+                optimal_io_size, ..
+            } => *optimal_io_size,
             StorageType::Unknown => 4096,
         }
     }

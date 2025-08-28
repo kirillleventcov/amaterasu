@@ -40,7 +40,7 @@ impl WipePattern {
                 0x55 => "0x55",
                 0xAA => "0xAA",
                 _ => "fixed",
-            }
+            },
             WipePattern::Zeros => "zeros",
             WipePattern::Ones => "ones",
         }

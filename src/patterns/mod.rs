@@ -72,3 +72,49 @@ pub fn create_pattern_sequence(mode: &crate::WipeMode) -> Vec<WipePattern> {
         ],
     }
 }
+
+pub fn create_storage_aware_pattern_sequence(
+    mode: &crate::WipeMode,
+    storage_type: &crate::storage::StorageType,
+) -> Vec<WipePattern> {
+    use crate::storage::StorageType;
+
+    match storage_type {
+        StorageType::SSD { .. } | StorageType::NVMe { .. } => {
+            // For SSDs and NVMe, multiple passes are unnecessary due to wear leveling
+            // Single random pass is sufficient and reduces wear
+            match mode {
+                crate::WipeMode::Fast => vec![create_random_generator()],
+                crate::WipeMode::Standard => vec![create_random_generator()],
+                crate::WipeMode::Paranoid => vec![
+                    create_random_generator(),
+                    WipePattern::Zeros, // Optional second pass for paranoid users
+                ],
+            }
+        }
+        StorageType::HDD { .. } => {
+            // For HDDs, multiple passes can be beneficial for security
+            match mode {
+                crate::WipeMode::Fast => vec![create_random_generator()],
+                crate::WipeMode::Standard => vec![
+                    create_random_generator(),
+                    WipePattern::Zeros,
+                    create_random_generator(),
+                ],
+                crate::WipeMode::Paranoid => vec![
+                    create_random_generator(),
+                    WipePattern::Fixed(0x55),
+                    WipePattern::Fixed(0xAA),
+                    create_random_generator(),
+                    WipePattern::Ones,
+                    WipePattern::Zeros,
+                    create_random_generator(),
+                ],
+            }
+        }
+        StorageType::Unknown => {
+            // Default to HDD behavior for unknown storage
+            create_pattern_sequence(mode)
+        }
+    }
+}

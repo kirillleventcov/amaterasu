@@ -86,7 +86,5 @@ async fn main() -> anyhow::Result<()> {
 
     let amaterasu = Amaterasu::new(config);
     amaterasu.wipe_files(&files).await?;
-
-    println!("✅ Secure deletion completed");
     Ok(())
 }

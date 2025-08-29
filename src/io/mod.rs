@@ -99,7 +99,6 @@ impl FileWiper {
         fs_optimizer.post_wipe_cleanup(path)?;
 
         std::fs::remove_file(path)?;
-        println!("✅ File securely deleted: {}", path.display());
         Ok(())
     }
 
@@ -207,8 +206,6 @@ impl FileWiper {
 
             if !pattern_found {
                 println!("⚠️  Warning: File appears to contain only zeros - this may indicate incomplete wipe");
-            } else {
-                println!("✅ Verification successful - data overwritten with pattern");
             }
             Ok(())
         }).await??;

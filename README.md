@@ -1,6 +1,6 @@
 # 🔥 Amaterasu
 
-> *"Amaterasu is a Mangekyō Sharingan dōjutsu, and the highest level of Fire Release. Amaterasu produces black flames at the focal point of the user's vision. In most situations, this makes Amaterasu impossible to avoid."*
+> *"Amaterasu is the highest level of Fire Release. In most situations ... Amaterasu is impossible to avoid."*
 
 A modern, fast file secure deletion tool for Linux. Named after the black flames that cannot be extinguished, Amaterasu ensures your data is irrecoverably destroyed.
 
@@ -58,8 +58,5 @@ Unlike traditional tools like `shred`, Amaterasu is built for modern storage sys
 
 ## License
 
-Licensed under either of Apache License, Version 2.0 or MIT license at your option.
+Licensed under GNU license.
 
----
-
-*"The flames of Amaterasu burn until nothing remains."*

@@ -191,6 +191,7 @@ pub fn apply_config_to_amaterasu(
     AmaterasuConfig {
         verify: cli_config.verify,
         progress: cli_config.progress,
+        force: cli_config.force,
         mode: cli_config.mode,
     }
 }

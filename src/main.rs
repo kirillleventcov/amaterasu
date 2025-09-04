@@ -43,6 +43,13 @@ async fn main() -> anyhow::Result<()> {
                 .action(clap::ArgAction::SetTrue),
         )
         .arg(
+            Arg::new("force")
+                .long("force")
+                .short('f')
+                .help("Force deletion without prompts, ignore non-existent files")
+                .action(clap::ArgAction::SetTrue),
+        )
+        .arg(
             Arg::new("config")
                 .long("config")
                 .help("Create default config file and exit")
@@ -86,6 +93,7 @@ async fn main() -> anyhow::Result<()> {
     let config = AmaterasuConfig {
         verify: matches.get_flag("verify") || config_file.defaults.verify,
         progress: (!matches.get_flag("no-progress")) && config_file.defaults.progress,
+        force: matches.get_flag("force"),
         mode,
     };
 

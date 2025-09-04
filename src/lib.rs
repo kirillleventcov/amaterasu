@@ -13,6 +13,7 @@ use tokio::fs;
 pub struct AmaterasuConfig {
     pub verify: bool,
     pub progress: bool,
+    pub force: bool,
     pub mode: WipeMode,
 }
 
@@ -28,6 +29,7 @@ impl Default for AmaterasuConfig {
         Self {
             verify: true,
             progress: true,
+            force: false,
             mode: WipeMode::Standard,
         }
     }
@@ -60,10 +62,10 @@ impl Amaterasu {
                 if recursive {
                     let dir_files = self.collect_files_from_directory(path).await?;
                     files_to_wipe.extend(dir_files);
-                } else {
+                } else if !self.config.force {
                     eprintln!("Warning: {} is a directory. Use -r/--recursive to delete directories and their contents.", path.display());
                 }
-            } else {
+            } else if !self.config.force {
                 eprintln!(
                     "Warning: {} does not exist or is not a regular file/directory.",
                     path.display()
@@ -98,11 +100,21 @@ impl Amaterasu {
 
     pub async fn wipe_files(&self, paths: &[PathBuf]) -> Result<()> {
         for path in paths {
-            self.wipe_file(path).await?;
+            if let Err(e) = self.wipe_file(path).await {
+                if self.config.force {
+                    eprintln!("Warning: Failed to wipe {}: {}", path.display(), e);
+                } else {
+                    return Err(e);
+                }
+            }
         }
 
         // After wiping all files, remove empty directories if any were processed
-        self.cleanup_empty_directories(paths).await?;
+        if let Err(e) = self.cleanup_empty_directories(paths).await {
+            if !self.config.force {
+                return Err(e);
+            }
+        }
 
         Ok(())
     }

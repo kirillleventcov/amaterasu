@@ -15,6 +15,8 @@ pub struct AmaterasuConfig {
     pub progress: bool,
     pub force: bool,
     pub mode: WipeMode,
+    pub wipe_metadata: bool,
+    pub metadata_passes: usize,
 }
 
 #[derive(Debug, Clone)]
@@ -31,6 +33,8 @@ impl Default for AmaterasuConfig {
             progress: true,
             force: false,
             mode: WipeMode::Standard,
+            wipe_metadata: true,
+            metadata_passes: 3,
         }
     }
 }

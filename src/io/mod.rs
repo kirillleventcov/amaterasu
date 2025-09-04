@@ -98,7 +98,16 @@ impl FileWiper {
         // Apply filesystem-specific post-wipe cleanup
         fs_optimizer.post_wipe_cleanup(path)?;
 
-        std::fs::remove_file(path)?;
+        // Wipe metadata before final deletion if enabled
+        if self.config.wipe_metadata {
+            let metadata_wiper =
+                crate::security::metadata::MetadataWiper::new(self.config.metadata_passes);
+            metadata_wiper.wipe_file_metadata(path).await?;
+        } else {
+            // Simple file removal without metadata wiping
+            std::fs::remove_file(path)?;
+        }
+
         Ok(())
     }
 

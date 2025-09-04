@@ -55,6 +55,19 @@ async fn main() -> anyhow::Result<()> {
                 .help("Create default config file and exit")
                 .action(clap::ArgAction::SetTrue),
         )
+        .arg(
+            Arg::new("no-metadata-wipe")
+                .long("no-metadata-wipe")
+                .help("Skip metadata wiping (faster but less secure)")
+                .action(clap::ArgAction::SetTrue),
+        )
+        .arg(
+            Arg::new("metadata-passes")
+                .long("metadata-passes")
+                .help("Number of metadata wiping passes")
+                .value_parser(clap::value_parser!(usize))
+                .default_value("3"),
+        )
         .get_matches();
 
     // Handle config creation request
@@ -95,6 +108,8 @@ async fn main() -> anyhow::Result<()> {
         progress: (!matches.get_flag("no-progress")) && config_file.defaults.progress,
         force: matches.get_flag("force"),
         mode,
+        wipe_metadata: !matches.get_flag("no-metadata-wipe"),
+        metadata_passes: *matches.get_one::<usize>("metadata-passes").unwrap(),
     };
 
     println!("🔥 Amaterasu - Secure File Deletion");

@@ -193,6 +193,8 @@ pub fn apply_config_to_amaterasu(
         progress: cli_config.progress,
         force: cli_config.force,
         mode: cli_config.mode,
+        wipe_metadata: cli_config.wipe_metadata,
+        metadata_passes: cli_config.metadata_passes,
     }
 }
 

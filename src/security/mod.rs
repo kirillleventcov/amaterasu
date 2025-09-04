@@ -1,3 +1,4 @@
+pub mod metadata;
 pub mod verification;
 
 use crate::Result;

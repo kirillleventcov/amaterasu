@@ -30,12 +30,26 @@ amaterasu secret.txt
 # Wipe multiple files
 amaterasu file1.txt file2.dat sensitive.pdf
 
+# Wipe directories recursively
+amaterasu --recursive sensitive_folder/
+
 # Use paranoid mode with verification
 amaterasu --mode paranoid --verify important.doc
 
 # Fast mode for quick deletion
 amaterasu --mode fast temp_file.txt
+
+# Force deletion without prompts
+amaterasu --force --recursive old_data/
 ```
+
+### Options
+
+- `--mode, -m`: Wiping mode (fast, standard, paranoid) - defaults to standard
+- `--verify, -v`: Verify wipe completion by reading back the file
+- `--recursive, -r`: Recursively delete directories and their contents
+- `--force, -f`: Force deletion without prompts, ignore non-existent files
+- `--no-progress`: Disable progress bar display
 
 ### Wiping Modes
 

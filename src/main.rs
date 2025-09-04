@@ -36,6 +36,13 @@ async fn main() -> anyhow::Result<()> {
                 .action(clap::ArgAction::SetTrue),
         )
         .arg(
+            Arg::new("recursive")
+                .long("recursive")
+                .short('r')
+                .help("Recursively delete directories and their contents")
+                .action(clap::ArgAction::SetTrue),
+        )
+        .arg(
             Arg::new("config")
                 .long("config")
                 .help("Create default config file and exit")
@@ -61,11 +68,13 @@ async fn main() -> anyhow::Result<()> {
         config::ConfigFile::default()
     });
 
-    let files: Vec<PathBuf> = matches
+    let input_paths: Vec<PathBuf> = matches
         .get_many::<PathBuf>("files")
         .unwrap_or_default()
         .cloned()
         .collect();
+
+    let recursive = matches.get_flag("recursive");
 
     let mode = match matches.get_one::<String>("mode").unwrap().as_str() {
         "fast" => WipeMode::Fast,
@@ -82,9 +91,14 @@ async fn main() -> anyhow::Result<()> {
 
     println!("🔥 Amaterasu - Secure File Deletion");
     println!("Mode: {:?}", config.mode);
-    println!("Files to wipe: {}", files.len());
 
     let amaterasu = Amaterasu::new(config);
-    amaterasu.wipe_files(&files).await?;
+
+    // Collect all files to wipe (expand directories if recursive flag is set)
+    let files_to_wipe = amaterasu.collect_files(&input_paths, recursive).await?;
+
+    println!("Files to wipe: {}", files_to_wipe.len());
+
+    amaterasu.wipe_files(&files_to_wipe).await?;
     Ok(())
 }
